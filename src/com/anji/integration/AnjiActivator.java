@@ -97,6 +97,8 @@ public class AnjiActivator implements Activator {
 		net.step();
 		double[] result = new double[outputDimension];
 		for (int idx = 0; idx < outputDimension; ++idx) {
+			//UROC jasonayoder - this section is where the network is asked for the output
+			//from the final layer and then backtracks through the network to get its value
 			Neuron n = net.getOutputNeuron(idx);
 			result[idx] = n.getValue();
 		}
