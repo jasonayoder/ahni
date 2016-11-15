@@ -301,6 +301,7 @@ public class ActModAnjiNet extends AnjiNet {
 	
 	// UROC ZachSierp: return true if network contains any modulating connections, else false
 	// getTypeFunction() is a placeholder for code layout. Will need replaced with actual function
+	// Body commented out for compiling purposes
 	public boolean isModulating() {
 		/*for (NeuronConnection c : allConns) {
 			if (c.getTypeFunction()) {
