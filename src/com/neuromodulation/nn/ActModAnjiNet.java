@@ -1,25 +1,19 @@
 package com.neuromodulation.nn;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import com.anji.nn.AnjiNet;
 import com.anji.nn.CacheNeuronConnection;
-import com.anji.nn.Connection;
 import com.anji.nn.Neuron;
 import com.anji.nn.NeuronConnection;
 
 public class ActModAnjiNet extends AnjiNet {
 	// UROC ZachSierp: Contains all Source code from AnjiNet
 	//
-	// Added functionality to store the number of modulating connections in toString(). This carries into 
-	// toXML which calls the toString function. Added clearing allConns list to reset(). Overloaded constructor 
-	// to allow non modulating networks to be created for compatibility with existing tests. Network can evolve 
-	// modulation and use same constructor calls.
+    // Overloaded constructor to allow non modulating networks to be created for compatibility with existing tests. Network can evolve 
+	// modulation and use same constructor calls. Removed functions that can be handled at parent level.
 	//
 	// Throws errors because getTypeFunction() in isModulating() is undefined. Commented out for compiling purposes
 	//
@@ -30,15 +24,11 @@ public class ActModAnjiNet extends AnjiNet {
 	public final static String XML_TAG = "network";
 	
 	private ArrayList<Neuron> allNeurons;
-	private List<Neuron> inNeurons;
-	private List<Neuron> outNeurons;
 	
 	//UROC ZachSierp: Add array list for all connections
 	private ArrayList<NeuronConnection> allConns;
 
 	private List<CacheNeuronConnection> recurrentConns;
-
-	private String name;
 
 	/**
 	 * @param allNeurons
@@ -52,39 +42,17 @@ public class ActModAnjiNet extends AnjiNet {
 			List<Neuron> outputNeurons, List<CacheNeuronConnection> recurrentConns, 
 				Collection<NeuronConnection> allConns, String aName) {
 		
-		actModInit(allNeurons, inputNeurons, outputNeurons, recurrentConns, allConns, aName);
+		super(allNeurons, inputNeurons, outputNeurons, recurrentConns, aName);
+		allConns = new ArrayList<NeuronConnection>(allConns);
 		
 	}
 	
-	//UROC ZachSierp: Original AnjiNet constructor
+	//UROC ZachSierp: Original AnjiNet constructor. Initialize allConns to empty array.
 	public ActModAnjiNet(Collection<Neuron> allNeurons, List<Neuron> inputNeurons, 
 			List<Neuron> outputNeurons, List<CacheNeuronConnection> recurrentConns, String aName) {
 		
-		init(allNeurons, inputNeurons, outputNeurons, recurrentConns, aName);
-		
-	}
-
-	/**
-	 * for testing only
-	 */
-	// UROC ZachSierp: Changed to ActMod for compiling purpose
-	protected ActModAnjiNet() {
-		// no-op
-	}
-
-	/**
-	 * @return number corresponding to cost of network activation in resources
-	 */
-	public long cost() {
-		long result = 0;
-
-		Iterator it = allNeurons.iterator();
-		while (it.hasNext()) {
-			Neuron n = (Neuron) it.next();
-			result += n.cost();
-		}
-
-		return result;
+		super(allNeurons, inputNeurons, outputNeurons, recurrentConns, aName);
+		allConns = new ArrayList<NeuronConnection>();
 	}
 
 	/**
@@ -94,90 +62,6 @@ public class ActModAnjiNet extends AnjiNet {
 	 * @param someRecurrentConns recurrent connections
 	 * @param aName
 	 */
-	//UROC ZachSierp: Standard init
-	protected void init(Collection<Neuron> someNeurons, List<Neuron> someInNeurons,
-			List<Neuron> someOutNeurons, List<CacheNeuronConnection> someRecurrentConns, String aName) {
-		allNeurons = new ArrayList<Neuron>(someNeurons);
-		
-		inNeurons = someInNeurons;
-		outNeurons = someOutNeurons;
-		recurrentConns = someRecurrentConns;
-		name = aName;
-	}
-	//UROC ZachSierp: added @param someModConns. Added initialization for modConns ArrayList
-	protected void actModInit(Collection<Neuron> someNeurons, List<Neuron> someInNeurons, 
-			List<Neuron> someOutNeurons, List<CacheNeuronConnection> someRecurrentConns, 
-				Collection<NeuronConnection> someConns, String aName) {
-		allNeurons = new ArrayList<Neuron>(someNeurons);
-		allConns = new ArrayList<NeuronConnection>(someConns);
-
-		inNeurons = someInNeurons;
-		outNeurons = someOutNeurons;
-		recurrentConns = someRecurrentConns;
-		name = aName;
-	}
-
-	/**
-	 * @param idx
-	 * @return input neuron at position <code>idx</code>
-	 */
-	public Neuron getInputNeuron(int idx) {
-		return inNeurons.get(idx);
-	}
-
-	/**
-	 * @return number input neurons
-	 */
-	public int getInputDimension() {
-		return inNeurons.size();
-	}
-
-	// /**
-	// * @return <code>Collection</code> contains all <code>Neuron</code> objects
-	// */
-	// public Collection getAllNeurons() {
-	// return allNeurons;
-	// }
-
-	/**
-	 * @param idx
-	 * @return output neuron at position <code>idx</code>
-	 */
-	public Neuron getOutputNeuron(int idx) {
-		return outNeurons.get(idx);
-	}
-
-	/**
-	 * @param fromIdx
-	 * @param toIdx
-	 * @return output neurons from position <code>toIdx</code> (inclusive) to <code>fromIdx</code> (exclusive)
-	 */
-	public List<Neuron> getOutputNeurons(int fromIdx, int toIdx) {
-		return outNeurons.subList(fromIdx, toIdx);
-	}
-
-	/**
-	 * @param fromIdx
-	 * @param toIdx
-	 * @return input neurons from position <code>toIdx</code> (inclusive) to <code>fromIdx</code> (exclusive)
-	 */
-	public List<Neuron> getInputNeurons(int fromIdx, int toIdx) {
-		return inNeurons.subList(fromIdx, toIdx);
-	}
-
-	/**
-	 * @return number output neurons
-	 */
-	public int getOutputDimension() {
-		return outNeurons.size();
-	}
-
-	/**
-	 * @return <code>Collection</code> contains recurrent <code>Connection</code> objects
-	 */
-	public Collection<CacheNeuronConnection> getRecurrentConns() {
-		return recurrentConns;
-	}
 	
 	//UROC ZachSierp: returns collection of all connections
 	public Collection<NeuronConnection> getConns() {
@@ -187,81 +71,6 @@ public class ActModAnjiNet extends AnjiNet {
 	//UROC ZachSierp: return specific connection in allConns ArrayList
 	public NeuronConnection getModConn(int idx) {
 		return allConns.get(idx);
-	}
-	
-
-	/**
-	 * @see java.lang.Object#toString()
-	 */
-	public String toString() {
-		HashMap<Neuron, Integer> neuronIndexMap = new HashMap<Neuron, Integer>();
-		
-		int connCount = 0;
-		for (int n = 0; n < allNeurons.size(); n++) {
-			neuronIndexMap.put(allNeurons.get(n), n);
-			if (!inNeurons.contains(allNeurons.get(n))) {
-				connCount += allNeurons.get(n).getIncomingConns().size();
-			}
-		} 
-		
-		// UROC ZachSierp: function to calculate number of modulating connections for possible data display
-		/*
-		int actModCount = 0;
-		for (NeuronConnection conn : allConns) {
-			if(conn.getTypeFunction() == Modulator) {
-				actModCount++;
-			}
-		}
-		*/
-		
-		DecimalFormat nf = new DecimalFormat(" 0.00;-0.00");
-		StringBuilder out = new StringBuilder();
-		if (getName() != null) out.append(getName());
-		out.append("\nNeuron count: " + allNeurons.size());
-		out.append("\nSynapse count: " + connCount);
-		
-		// UROC ZachSierp: Display number of modulating connections
-		//out.append("\nNeuromodulating synapse count: " + actModCount);
-		
-		out.append("\nTopology type: " + (isRecurrent() ? "Reccurent" : "Feed-forward"));
-		
-		out.append("\n\nNeurons:\n\t\ttype\tfunc\tbias");
-		for (int n = 0; n < allNeurons.size(); n++) {
-			out.append("\n\t" + n + "\t" + getType(allNeurons.get(n)) + "\t" + allNeurons.get(n).getFunc() + "\t" + allNeurons.get(n).getBias());
-		}
-
-		out.append("\n\nConnections:");
-		out.append("\n\tpre > post\tweight");
-		
-		for (int ni = 0; ni < allNeurons.size(); ni++) {
-			Neuron n = allNeurons.get(ni);
-			for (Connection c : n.getIncomingConns()) {
-				if (c instanceof NeuronConnection) {
-					NeuronConnection nc = (NeuronConnection) c;
-					Neuron src = nc.getIncomingNode();
-					int pre = src != null ? neuronIndexMap.get(src) : -1;
-					int post = ni;
-					String preType = src != null ? getType(src) : "-";
-					String postType = getType(n);
-					out.append("\n\t" + preType + ":" + pre + " > " + postType + ":" + post + "\t" + nc.getWeight());
-				}
-			}
-		}
-
-		return out.toString();
-	}
-	
-	private String getType(Neuron n) {
-		if (inNeurons.contains(n)) return "i";
-		if (outNeurons.contains(n)) return "o";
-		return "h";
-	}
-
-	/**
-	 * @return the name.
-	 */
-	public String getName() {
-		return name;
 	}
 
 	/**
@@ -318,27 +127,6 @@ public class ActModAnjiNet extends AnjiNet {
 		//UROC ZachSierp: set all values in allConns to null
 		allConns.clear();
 	}
-
-	/**
-	 * @return <code>String</code> XML representation
-	 */
-	public String toXml() {
-		StringBuffer result = new StringBuffer();
-		result.append("<").append(XML_TAG).append(">\n");
-		result.append("<title>").append(getName()).append("</title>\n");
-		Neuron.appendToXml(allNeurons, outNeurons, result);
-		NeuronConnection.appendToXml(allNeurons, result);
-		result.append("</").append(XML_TAG).append(">\n");
-
-		return result.toString();
-	}
-
-	/**
-	 * @return true if network contains any recurrent connections, false otherwise
-	 */
-	public boolean isRecurrent() {
-		return !recurrentConns.isEmpty();
-	}
 	
 	// UROC ZachSierp: return true if network contains any modulating connections, else false
 	// getTypeFunction() is a placeholder for code layout. Will need replaced with actual function
@@ -349,12 +137,9 @@ public class ActModAnjiNet extends AnjiNet {
 				return true;
 			}
 			else return false; */
+		//placeholder until function body is ready
+		return false;
 	}
-
-	public void setName(String string) {
-		name = string;
-	}
-
 }
 
-}
+
