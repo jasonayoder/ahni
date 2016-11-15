@@ -15,10 +15,11 @@ import com.anji.nn.NeuronConnection;
 
 public class ActModAnjiNet extends AnjiNet {
 	// UROC ZachSierp: Contains all Source code from AnjiNet
-	// Changed Constructor and init func, added list of modulating connections,
-	// added return functions for modConns values, added bool to check for modulating connections
 	//
-	// Throws errors because ActModNeuron is undefined
+	// Added list of all connections, removed ActModNeuron instances, changed functionality of isModulating
+	// to check type of connection in all connections (NOTE: getTypeFunction() is a placeholder). 
+	//
+	// Throws errors because getTypeFunction() in isModulating() is undefined. Commented out for compiling purposes
 	//
 	//TO-DO: Update toString, fullyActivate, reset, step, toXML
 	/**
@@ -26,13 +27,12 @@ public class ActModAnjiNet extends AnjiNet {
 	 */
 	public final static String XML_TAG = "network";
 	
-	//UROC ZachSierp: Recast List<Neuron> to ArrayList<ActModNeuron>
-	private ArrayList<ActModNeuron> allNeurons;
-	private List<ActModNeuron> inNeurons;
-	private List<ActModNeuron> outNeurons;
+	private ArrayList<Neuron> allNeurons;
+	private List<Neuron> inNeurons;
+	private List<Neuron> outNeurons;
 	
-	//UROC ZachSierp: Add array list for neuromodulation connections
-	private ArrayList<ActModNeuronConnection> modConns;
+	//UROC ZachSierp: Add array list for all connections
+	private ArrayList<NeuronConnection> allConns;
 
 	private List<CacheNeuronConnection> recurrentConns;
 
@@ -45,11 +45,11 @@ public class ActModAnjiNet extends AnjiNet {
 	 * @param recurrentConns
 	 * @param aName
 	 */
-	//UROC ZachSierp: Added @param modConns. Changed Constructor to ActModAnjiNet
-	public ActModAnjiNet(Collection<ActModNeuron> allNeurons, List<ActModNeuron> inputNeurons, 
-			List<ActModNeuron> outputNeurons, List<CacheNeuronConnection> recurrentConns, 
-				Collection<ActModNeuronConnection> modConns, String aName) {
-		init(allNeurons, inputNeurons, outputNeurons, recurrentConns, modConns, aName);
+	//UROC ZachSierp: Added @param allConns. Changed Constructor to ActModAnjiNet
+	public ActModAnjiNet(Collection<Neuron> allNeurons, List<Neuron> inputNeurons, 
+			List<Neuron> outputNeurons, List<CacheNeuronConnection> recurrentConns, 
+				Collection<NeuronConnection> allConns, String aName) {
+		init(allNeurons, inputNeurons, outputNeurons, recurrentConns, allConns, aName);
 	}
 
 	/**
@@ -85,9 +85,9 @@ public class ActModAnjiNet extends AnjiNet {
 	//UROC ZachSierp: added @param someModConns. Added initialization for modConns ArrayList
 	protected void init(Collection<Neuron> someNeurons, List<Neuron> someInNeurons, 
 			List<Neuron> someOutNeurons, List<CacheNeuronConnection> someRecurrentConns, 
-				Collection<ActModNeuronConnection> someModConns, String aName) {
-		allNeurons = new ArrayList<ActModNeuron>(someNeurons);
-		modConns = new ArrayList<ActModNeuronConnection>(someModConns);
+				Collection<NeuronConnection> someConns, String aName) {
+		allNeurons = new ArrayList<Neuron>(someNeurons);
+		allConns = new ArrayList<NeuronConnection>(someConns);
 
 		inNeurons = someInNeurons;
 		outNeurons = someOutNeurons;
@@ -157,14 +157,14 @@ public class ActModAnjiNet extends AnjiNet {
 		return recurrentConns;
 	}
 	
-	//UROC ZachSierp: returns collection of Modulating connections
-	public Collection<ActModNeuronConnection> getModConns() {
-		return modConns;
+	//UROC ZachSierp: returns collection of all connections
+	public Collection<NeuronConnection> getConns() {
+		return allConns;
 	}
 	
-	//UROC ZachSierp: return specific modulating connection in modConns ArrayList
-	public ActModNeuronConnection getModConn(int idx) {
-		return modConns.get(idx);
+	//UROC ZachSierp: return specific connection in allConns ArrayList
+	public NeuronConnection getModConn(int idx) {
+		return allConns.get(idx);
 	}
 
 	/**
@@ -300,8 +300,13 @@ public class ActModAnjiNet extends AnjiNet {
 	}
 	
 	// UROC ZachSierp: return true if network contains any modulating connections, else false
+	// getTypeFunction() is a placeholder for code layout. Will need replaced with actual function
 	public boolean isModulating() {
-		return !modConns.isEmpty();
+		/*for (NeuronConnection c : allConns) {
+			if (c.getTypeFunction()) {
+				return true;
+			}
+			else return false; */
 	}
 
 	public void setName(String string) {
