@@ -12,12 +12,8 @@ import com.anji.nn.NeuronConnection;
 public class ActModAnjiNet extends AnjiNet {
 	// UROC ZachSierp: Contains all Source code from AnjiNet
 	//
-    // Overloaded constructor to allow non modulating networks to be created for compatibility with existing tests. Network can evolve 
-	// modulation and use same constructor calls. Removed functions that can be handled at parent level.
+	// Removed functions that can be handled at parent level.
 	//
-	// Throws errors because getTypeFunction() in isModulating() is undefined. Commented out for compiling purposes
-	//
-	// TO-DO: Update getTypeFunction() with ActModNeuronConnection functions in toString() and isModulating()
 	/**
 	 * base XML tag
 	 */
@@ -46,14 +42,6 @@ public class ActModAnjiNet extends AnjiNet {
 		allConns = new ArrayList<NeuronConnection>(allConns);
 		
 	}
-	
-	//UROC ZachSierp: Original AnjiNet constructor. Initialize allConns to empty array.
-	public ActModAnjiNet(Collection<Neuron> allNeurons, List<Neuron> inputNeurons, 
-			List<Neuron> outputNeurons, List<CacheNeuronConnection> recurrentConns, String aName) {
-		
-		super(allNeurons, inputNeurons, outputNeurons, recurrentConns, aName);
-		allConns = new ArrayList<NeuronConnection>();
-	}
 
 	/**
 	 * @param someNeurons all neurons
@@ -69,7 +57,7 @@ public class ActModAnjiNet extends AnjiNet {
 	}
 	
 	//UROC ZachSierp: return specific connection in allConns ArrayList
-	public NeuronConnection getModConn(int idx) {
+	public NeuronConnection getConn(int idx) {
 		return allConns.get(idx);
 	}
 
@@ -129,16 +117,16 @@ public class ActModAnjiNet extends AnjiNet {
 	}
 	
 	// UROC ZachSierp: return true if network contains any modulating connections, else false
-	// getTypeFunction() is a placeholder for code layout. Will need replaced with actual function
-	// Body commented out for compiling purposes
+	// getTypeFunction() is a placeholder for code layout. 
 	public boolean isModulating() {
-		/*for (NeuronConnection c : allConns) {
-			if (c.getTypeFunction()) {
-				return true;
+		boolean res = false;
+		for (NeuronConnection c : allConns) {
+			if (c instanceof ActModNeuronConnection) {
+				res = true;
+				break;
 			}
-			else return false; */
-		//placeholder until function body is ready
-		return false;
+		}
+		return res;
 	}
 }
 
