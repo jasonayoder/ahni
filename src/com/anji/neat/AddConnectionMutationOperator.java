@@ -43,6 +43,12 @@ import com.anji.util.Properties;
  */
 public class AddConnectionMutationOperator extends MutationOperatorMultiple implements Configurable {
 
+	
+	/** We will probably need a properties key for the rate at which mutations should add modulatory connections
+	as well as a function to set the modulatory mutation rate
+	*/
+
+
 	/**
 	 * properties key, add connection mutation rate
 	 */
@@ -146,6 +152,12 @@ public class AddConnectionMutationOperator extends MutationOperatorMultiple impl
 		HashSet<Long> neuronsWithBiasAdded = new HashSet<Long>();
 		boolean bvi = config.biasViaInput();
 
+		/** We might need something here where a rate determines how many of the numConnectionsToAdd should be modulatory and how many should not.
+		Then inside the for loop below should be something that switches to creating modulatory connections 
+		after the correct number of normal connections have been created.
+		*/
+
+
 		for (int i = 0; i < numConnectionsToAdd; ++i) {
 			Allele newAllele = null;
 			NeuronAllele src = null;
@@ -164,6 +176,10 @@ public class AddConnectionMutationOperator extends MutationOperatorMultiple impl
 				// If src is not a simulated bias input neuron.
 				if (srcIdx < neuronList.size()) {
 					src = neuronList.get(srcIdx);
+
+					/** The code in this if statement is where changes must be
+					made to control the type of connection created.
+					*/
 					
 					newAllele = config.newConnectionAllele(src.getInnovationId(), dest.getInnovationId());
 					if (conns.containsKey(newAllele.getInnovationId()) || rejectedConnIds.contains(newAllele.getInnovationId())) {

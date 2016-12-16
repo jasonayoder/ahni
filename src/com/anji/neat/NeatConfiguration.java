@@ -84,6 +84,13 @@ public class NeatConfiguration extends Configuration implements Configurable {
 	 * properties key, proportion of new population that is generated via crossover from two parents (as opposed to mutation of a single parent), [0, 1].
 	 */
 	public static final String CROSSOVER_PROPORTION_KEY = "crossover.proportion";
+	
+
+
+	/** We may need some property keys controlling the probability that an individual produced by crossover will be a candidate for 
+	having a modulatory mutation applied to it as well as the probabilty of a modulatory mutation in an individual not produced by crossover.
+	*/
+
 	/**
 	 * properties key, the probability that an individual produced by the crossover operator will be a candidate for having mutations applied to it (independent of other mutation probabilities).
 	 */
@@ -93,6 +100,9 @@ public class NeatConfiguration extends Configuration implements Configurable {
 	 * occurs per generation per individual
 	 */
 	public static final String TOPOLOGY_MUTATION_CLASSIC_KEY = "topology.mutation.classic";
+	
+
+
 	/**
 	 * properties key, maximum connection weight
 	 */
@@ -186,6 +196,11 @@ public class NeatConfiguration extends Configuration implements Configurable {
 	/**
 	 * properties key, number of hidden neurons in initial topology
 	 */
+
+	/** We may want some properties key controlling the number of modulatory neurons in the initial topology and one defining the allowed function
+	type for modulatory neurons.
+	*/
+
 	public final static String INITIAL_TOPOLOGY_NUM_HIDDEN_NEURONS_KEY = "initial.topology.num.hidden.neurons";
 	/**
 	 * properties key, activation function type of neurons
@@ -234,6 +249,11 @@ public class NeatConfiguration extends Configuration implements Configurable {
 	 * 
 	 * @throws InvalidConfigurationException
 	 */
+
+
+	/** Clearly this initMutation function will need to have some of the functions it uses changed to be able to support mutations that add
+	modulatory neurons and connections
+	*/
 	protected void initMutation() throws InvalidConfigurationException {
 		// remove connection
 		RemoveConnectionMutationOperator removeOperator = props.singletonObjectProperty(RemoveConnectionMutationOperator.class);
@@ -365,6 +385,9 @@ public class NeatConfiguration extends Configuration implements Configurable {
 		addReproductionOperator(getCloneOperator());
 		addReproductionOperator(getCrossoverOperator());
 
+		/** Not sure, but we might need to set a separate mutate rate for molulatory mutations here
+		*/
+
 		// mutation
 		initMutation();
 
@@ -395,6 +418,10 @@ public class NeatConfiguration extends Configuration implements Configurable {
 			}
 		}
 		
+
+		/** Something might need to go here refering to the activationtype for modulatory neurons
+		*/
+
 		inputActivationType = props.getProperty(INITIAL_TOPOLOGY_ACTIVATION_INPUT_KEY, hiddenActivationType);
 		outputActivationType = props.getProperty(INITIAL_TOPOLOGY_ACTIVATION_OUTPUT_KEY, hiddenActivationType);
 
@@ -452,6 +479,10 @@ public class NeatConfiguration extends Configuration implements Configurable {
 			logger.warn(SPECIATION_THRESHOLD_CHANGE_KEY + " is deprecated, adjustment amounts are now calculated as a ratio of the target and current species counts.");
 		}
 	}
+
+
+	/** We might need separate functions here that create newModulatoryNeuronAlleles and newModluatoryConnectionAlleles
+	*/
 
 	/**
 	 * factory method to construct new neuron allele with unique innovation ID of specified <code>type</code>
